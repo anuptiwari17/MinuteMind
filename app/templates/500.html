@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center; padding: 4rem 2rem; max-width: 600px; margin: 0 auto;">
+    <div style="font-size: 6rem; margin-bottom: 1rem; opacity: 0.3;">500</div>
+    <h1 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem;">
+        Something Went Wrong
+    </h1>
+    <p style="font-size: 1.1rem; color: #64748b; margin-bottom: 2rem;">
+        We're experiencing technical difficulties. Please try again in a moment.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/" class="btn">
+            ← Back to Home
+        </a>
+        <a href="/create" class="btn btn-success">
+            Try Again
+        </a>
+    </div>
+</div>
+{% endblock %}

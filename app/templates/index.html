@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center; max-width: 700px; margin: 0 auto;">
+    <!-- Hero Section -->
+    <div style="margin-bottom: 3rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem; line-height: 1.2;">
+            Transform Meeting Notes into Professional Reports
+        </h1>
+        <p style="font-size: 1.1rem; color: #64748b; margin-bottom: 2rem;">
+            AI-powered extraction of key information. Generate structured PDF reports in seconds.
+        </p>
+        <a href="/create" class="btn" style="font-size: 1.1rem; padding: 1rem 2rem;">
+            Create Report →
+        </a>
+    </div>
+    
+    <!-- Features -->
+    <div style="margin-top: 4rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: left;">
+            
+            <div class="card" style="padding: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">
+                    Fast & Automated
+                </h3>
+                <p style="color: #64748b; font-size: 0.95rem;">
+                    Extract meeting details automatically in seconds. No manual formatting needed.
+                </p>
+            </div>
+            
+            <div class="card" style="padding: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">🔒</div>
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">
+                    Private & Local
+                </h3>
+                <p style="color: #64748b; font-size: 0.95rem;">
+                    All processing happens locally. Your meeting data never leaves your system.
+                </p>
+            </div>
+            
+            <div class="card" style="padding: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">📄</div>
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">
+                    Professional PDFs
+                </h3>
+                <p style="color: #64748b; font-size: 0.95rem;">
+                    Generate clean, formatted PDF reports ready to share with your team.
+                </p>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- How It Works -->
+    <div style="margin-top: 4rem; text-align: left;">
+        <h2 style="font-size: 1.75rem; font-weight: 600; color: #1e293b; margin-bottom: 2rem; text-align: center;">
+            How It Works
+        </h2>
+        
+        <div class="card">
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    <div style="flex-shrink: 0; width: 2rem; height: 2rem; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        1
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.25rem;">Enter Meeting Notes</h4>
+                        <p style="color: #64748b; font-size: 0.95rem;">Paste your raw meeting notes or transcription</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    <div style="flex-shrink: 0; width: 2rem; height: 2rem; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        2
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.25rem;">AI Extracts Information</h4>
+                        <p style="color: #64748b; font-size: 0.95rem;">Automatically identifies time, participants, topics, and action items</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    <div style="flex-shrink: 0; width: 2rem; height: 2rem; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        3
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.25rem;">Download PDF Report</h4>
+                        <p style="color: #64748b; font-size: 0.95rem;">Get a formatted, professional report ready to share</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

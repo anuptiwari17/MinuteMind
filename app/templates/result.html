@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    
+    <!-- Success Header -->
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">✓</div>
+        <h1 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">
+            Report Generated Successfully
+        </h1>
+        <p style="color: #64748b;">
+            Your meeting report is ready to download
+        </p>
+    </div>
+    
+    <!-- Extracted Information -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;">
+            Extracted Information
+        </h2>
+        
+        <!-- Meeting Time -->
+        <div style="margin-bottom: 2rem;">
+            <h3 style="font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
+                Meeting Time
+            </h3>
+            <p style="font-size: 1.1rem; color: #1e293b;">
+                {{ meeting_data.meeting_time }}
+            </p>
+        </div>
+        
+        <!-- Participants -->
+        <div style="margin-bottom: 2rem;">
+            <h3 style="font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+                Participants
+            </h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                {% for participant in meeting_data.participants %}
+                    <span style="background: #f1f5f9; color: #334155; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem;">
+                        {{ participant }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Topics -->
+        <div style="margin-bottom: 2rem;">
+            <h3 style="font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+                Topics Discussed
+            </h3>
+            <ul style="list-style: none; padding: 0;">
+                {% for topic in meeting_data.topics %}
+                    <li style="padding: 0.75rem; background: #f8fafc; border-left: 3px solid #2563eb; margin-bottom: 0.5rem; border-radius: 4px; color: #334155;">
+                        {{ topic }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <!-- Action Items -->
+        <div>
+            <h3 style="font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+                Action Items
+            </h3>
+            {% if meeting_data.action_items|length > 0 %}
+                <ul style="list-style: none; padding: 0;">
+                    {% for action in meeting_data.action_items %}
+                        <li style="padding: 0.75rem; background: #f0fdf4; border-left: 3px solid #16a34a; margin-bottom: 0.5rem; border-radius: 4px; color: #166534;">
+                            {% if action is mapping %}
+                                <strong>{{ action.item }}</strong> — {{ action.responsible }}
+                                {% if action.due %}<span style="color: #64748b;">(Due: {{ action.due }})</span>{% endif %}
+                            {% else %}
+                                {{ action }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: #64748b; font-style: italic;">
+                    No action items recorded
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/download/{{ pdf_filename }}" class="btn" style="font-size: 1.05rem; padding: 1rem 2rem;">
+            📥 Download PDF Report
+        </a>
+        <a href="/create" class="btn btn-success">
+            Create Another Report
+        </a>
+        <a href="/" class="btn btn-secondary">
+            Back to Home
+        </a>
+    </div>
+    
+</div>
+{% endblock %}

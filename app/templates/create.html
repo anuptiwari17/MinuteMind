@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">
+            Create Meeting Report
+        </h1>
+        <p style="color: #64748b;">
+            Paste your meeting notes below and we'll extract the key information automatically.
+        </p>
+    </div>
+    
+    <form method="POST" id="meetingForm">
+        <div class="card">
+            <label for="meeting_notes" style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: #1e293b; font-size: 0.95rem;">
+                Meeting Notes
+            </label>
+            
+            <textarea 
+                name="meeting_notes" 
+                id="meeting_notes" 
+                rows="16" 
+                style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; resize: vertical; transition: border-color 0.2s; outline: none;"
+                placeholder="Example:
+
+Meeting held on January 15, 2025 at 10:00 AM
+
+Attendees: John Smith, Sarah Johnson, Mike Davis
+
+We discussed the Q1 budget planning. Sarah will prepare the budget report by Friday. Mike will review the vendor contracts.
+
+Next meeting scheduled for next Monday at 2 PM."
+                required
+                onfocus="this.style.borderColor='#2563eb'"
+                onblur="this.style.borderColor='#e2e8f0'"
+            ></textarea>
+            
+            <div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 6px; border-left: 3px solid #2563eb;">
+                <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem; font-weight: 600;">
+                    💡 Tips for better results:
+                </p>
+                <ul style="margin-left: 1.25rem; color: #64748b; font-size: 0.85rem; line-height: 1.6;">
+                    <li>Include the meeting date and time</li>
+                    <li>List participant names clearly</li>
+                    <li>Mention action items with responsible persons</li>
+                    <li>Separate different topics with line breaks</li>
+                </ul>
+            </div>
+            
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button type="submit" class="btn" id="submitBtn">
+                    Generate Report
+                </button>
+                <a href="/" class="btn btn-secondary">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Show loading state when form is submitted
+    document.getElementById('meetingForm').addEventListener('submit', function(e) {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.innerHTML = '⏳ Processing... (this may take 20-30 seconds)';
+    });
+</script>
+{% endblock %}
