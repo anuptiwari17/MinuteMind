@@ -5,6 +5,8 @@ from app.pdf_generator import generate_pdf
 from config import Config
 from logger_config import log_info, log_error, log_request, log_report_generation
 import os
+from database import add_meeting, get_all_meetings, search_meetings, delete_meeting, get_database_stats
+from app.audio_handler import transcribe_audio, validate_audio_file, save_uploaded_audio, cleanup_audio_file
 
 
 def validate_meeting_input(text):
@@ -109,14 +111,23 @@ def create_meeting():
         log_request('/create', 'POST', 500)
         return redirect(url_for('create_meeting'))
     
-    # Success!
+    # Success! Save to database
     log_report_generation(True, filename=filename)
+    
+    # Add to database
+    try:
+        meeting_id = add_meeting(meeting_data, filename, len(meeting_notes))
+        log_info(f"Meeting saved to database with ID: {meeting_id}")
+    except Exception as e:
+        log_error(f"Failed to save meeting to database: {str(e)}", e)
+        # Don't fail the request, just log the error
+    
     flash('Meeting report generated successfully!', 'success')
     log_request('/create', 'POST', 200)
     
     return render_template('result.html', 
-                         meeting_data=meeting_data, 
-                         pdf_filename=filename)
+                           meeting_data=meeting_data, 
+                           pdf_filename=filename)
 
 
 @app.route('/download/<filename>')
@@ -151,6 +162,118 @@ def download_pdf(filename):
         flash('File not found', 'error')
         log_request(f'/download/{filename}', 'GET', 404)
         return redirect(url_for('index'))
+
+
+@app.route('/history')
+def history():
+    """View all past meeting reports"""
+    
+    log_request('/history', 'GET', 200)
+    
+    # Get search query if any
+    search_query = request.args.get('search', '').strip()
+    
+    if search_query:
+        log_info(f"Searching meetings for: {search_query}")
+        meetings = search_meetings(search_query)
+    else:
+        meetings = get_all_meetings()
+    
+    # Get database stats
+    stats = get_database_stats()
+    
+    return render_template('history.html', 
+                         meetings=meetings, 
+                         search_query=search_query,
+                         stats=stats)
+
+
+@app.route('/view/<int:meeting_id>')
+def view_meeting(meeting_id):
+    """View a specific meeting from history"""
+    
+    log_info(f"Viewing meeting ID: {meeting_id}")
+    
+    from database import get_meeting_by_id
+    meeting = get_meeting_by_id(meeting_id)
+    
+    if meeting is None:
+        flash('Meeting not found', 'error')
+        log_request(f'/view/{meeting_id}', 'GET', 404)
+        return redirect(url_for('history'))
+    
+    log_request(f'/view/{meeting_id}', 'GET', 200)
+    return render_template('view_meeting.html', meeting=meeting)
+
+
+@app.route('/delete/<int:meeting_id>', methods=['POST'])
+def delete_meeting_route(meeting_id):
+    """Delete a meeting from history"""
+    
+    log_info(f"Delete requested for meeting ID: {meeting_id}")
+    
+    success = delete_meeting(meeting_id)
+    
+    if success:
+        flash('Meeting deleted successfully', 'success')
+        log_info(f"Meeting {meeting_id} deleted successfully")
+    else:
+        flash('Meeting not found', 'error')
+        log_error(f"Failed to delete meeting {meeting_id}")
+    
+    return redirect(url_for('history'))
+
+
+
+@app.route('/transcribe', methods=['POST'])
+def transcribe():
+    """Transcribe uploaded audio file"""
+    
+    log_info("Audio transcription requested")
+    
+    # Check if file is in request
+    if 'audio_file' not in request.files:
+        log_error("No audio file in request")
+        return {'success': False, 'error': 'No audio file provided'}, 400
+    
+    file = request.files['audio_file']
+    
+    # Validate file
+    is_valid, error_msg = validate_audio_file(file)
+    if not is_valid:
+        log_error(f"Audio validation failed: {error_msg}")
+        return {'success': False, 'error': error_msg}, 400
+    
+    filepath = None
+    
+    try:
+        # Save uploaded file
+        filepath = save_uploaded_audio(file)
+        log_info(f"Processing audio file: {filepath}")
+        
+        # Transcribe
+        text, error = transcribe_audio(filepath)
+        
+        if error:
+            log_error(f"Transcription failed: {error}")
+            return {'success': False, 'error': error}, 500
+        
+        log_info(f"✅ Transcription successful: {len(text)} characters")
+        
+        return {
+            'success': True,
+            'text': text,
+            'length': len(text)
+        }, 200
+        
+    except Exception as e:
+        log_error(f"Unexpected error during transcription: {str(e)}", e)
+        return {'success': False, 'error': 'An unexpected error occurred'}, 500
+        
+    finally:
+        # Cleanup
+        if filepath:
+            cleanup_audio_file(filepath)
 
 
 @app.errorhandler(404)

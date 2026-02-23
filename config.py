@@ -26,3 +26,11 @@ class Config:
     def init_app(app):
         """Initialize the Flask app with config"""
         pass
+
+    # Audio Processing Configuration
+    SPEECH_ENGINE = os.getenv('SPEECH_ENGINE', 'vosk')
+    VOSK_MODEL_PATH = os.getenv('VOSK_MODEL_PATH', 'models/vosk-model-small-en-us-0.15')
+    MAX_AUDIO_SIZE_MB = int(os.getenv('MAX_AUDIO_SIZE_MB', 25))
+    ALLOWED_AUDIO_FORMATS = os.getenv('ALLOWED_AUDIO_FORMATS', 'mp3,wav,m4a,ogg,webm').split(',')
+    AUDIO_TEMP_DIR = os.getenv('AUDIO_TEMP_DIR', 'app/uploads')
+    AUTO_DELETE_AUDIO = os.getenv('AUTO_DELETE_AUDIO', 'True') == 'True'

@@ -7,22 +7,45 @@
             Create Meeting Report
         </h1>
         <p style="color: #64748b;">
-            Paste your meeting notes below and we'll extract the key information automatically.
+            Enter meeting notes or upload audio recording
         </p>
     </div>
     
+    <!-- Tab Buttons -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0;">
+        <button 
+            id="textTab" 
+            class="tab-btn active"
+            onclick="switchTab('text')"
+            style="padding: 0.75rem 1.5rem; border: none; background: none; font-size: 1rem; font-weight: 500; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;"
+        >
+            📝 Text Input
+        </button>
+        <button 
+            id="voiceTab" 
+            class="tab-btn"
+            onclick="switchTab('voice')"
+            style="padding: 0.75rem 1.5rem; border: none; background: none; font-size: 1rem; font-weight: 500; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;"
+        >
+            🎤 Voice Input
+        </button>
+    </div>
+    
     <form method="POST" id="meetingForm">
-        <div class="card">
-            <label for="meeting_notes" style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: #1e293b; font-size: 0.95rem;">
-                Meeting Notes
-            </label>
-            
-            <textarea 
-                name="meeting_notes" 
-                id="meeting_notes" 
-                rows="16" 
-                style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; resize: vertical; transition: border-color 0.2s; outline: none;"
-                placeholder="Example:
+        
+        <!-- TEXT INPUT TAB -->
+        <div id="textContent" class="tab-content">
+            <div class="card">
+                <label for="meeting_notes" style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: #1e293b; font-size: 0.95rem;">
+                    Meeting Notes
+                </label>
+                
+                <textarea 
+                    name="meeting_notes" 
+                    id="meeting_notes" 
+                    rows="16" 
+                    style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; resize: vertical; transition: border-color 0.2s; outline: none;"
+                    placeholder="Example:
 
 Meeting held on January 15, 2025 at 10:00 AM
 
@@ -31,42 +54,262 @@ Attendees: John Smith, Sarah Johnson, Mike Davis
 We discussed the Q1 budget planning. Sarah will prepare the budget report by Friday. Mike will review the vendor contracts.
 
 Next meeting scheduled for next Monday at 2 PM."
-                required
-                onfocus="this.style.borderColor='#2563eb'"
-                onblur="this.style.borderColor='#e2e8f0'"
-            ></textarea>
-            
-            <div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 6px; border-left: 3px solid #2563eb;">
-                <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem; font-weight: 600;">
-                    💡 Tips for better results:
-                </p>
-                <ul style="margin-left: 1.25rem; color: #64748b; font-size: 0.85rem; line-height: 1.6;">
-                    <li>Include the meeting date and time</li>
-                    <li>List participant names clearly</li>
-                    <li>Mention action items with responsible persons</li>
-                    <li>Separate different topics with line breaks</li>
-                </ul>
+                    onfocus="this.style.borderColor='#2563eb'"
+                    onblur="this.style.borderColor='#e2e8f0'"
+                ></textarea>
+                
+                <div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 6px; border-left: 3px solid #2563eb;">
+                    <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem; font-weight: 600;">
+                        💡 Tips for better results:
+                    </p>
+                    <ul style="margin-left: 1.25rem; color: #64748b; font-size: 0.85rem; line-height: 1.6;">
+                        <li>Include the meeting date and time</li>
+                        <li>List participant names clearly</li>
+                        <li>Mention action items with responsible persons</li>
+                        <li>Separate different topics with line breaks</li>
+                    </ul>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button type="submit" class="btn" id="submitBtn">
+                        Generate Report
+                    </button>
+                    <a href="/" class="btn btn-secondary">
+                        Cancel
+                    </a>
+                </div>
             </div>
-            
-            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button type="submit" class="btn" id="submitBtn">
-                    Generate Report
-                </button>
-                <a href="/" class="btn btn-secondary">
-                    Cancel
-                </a>
+        </div>
+        
+        <!-- VOICE INPUT TAB -->
+        <div id="voiceContent" class="tab-content" style="display: none;">
+            <div class="card">
+                
+                <!-- File Upload Area -->
+                <div 
+                    id="uploadArea"
+                    style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 3rem 2rem; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.2s;"
+                    onclick="document.getElementById('audioFile').click()"
+                    ondragover="event.preventDefault(); this.style.borderColor='#2563eb'; this.style.background='#eff6ff';"
+                    ondragleave="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc';"
+                    ondrop="handleDrop(event)"
+                >
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎤</div>
+                    <p style="font-size: 1.1rem; color: #1e293b; font-weight: 500; margin-bottom: 0.5rem;">
+                        Drop audio file here or click to browse
+                    </p>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">
+                        Supported: MP3, WAV, M4A, OGG, WebM
+                    </p>
+                    <p style="font-size: 0.85rem; color: #94a3b8;">
+                        Maximum size: 25 MB (~15 minutes)
+                    </p>
+                    
+                    <input 
+                        type="file" 
+                        id="audioFile" 
+                        accept=".mp3,.wav,.m4a,.ogg,.webm,audio/*"
+                        style="display: none;"
+                        onchange="handleFileSelect(event)"
+                    />
+                </div>
+                
+                <!-- Selected File Info -->
+                <div id="fileInfo" style="display: none; margin-top: 1rem; padding: 1rem; background: #f0fdf4; border-left: 3px solid #16a34a; border-radius: 6px;">
+                    <p style="font-weight: 600; color: #166534; margin-bottom: 0.25rem;">
+                        ✓ File Selected
+                    </p>
+                    <p id="fileName" style="color: #15803d; font-size: 0.9rem;"></p>
+                </div>
+                
+                <!-- Transcription Area -->
+                <div id="transcriptionArea" style="display: none; margin-top: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: #1e293b; font-size: 0.95rem;">
+                        Transcribed Text (you can edit before generating report)
+                    </label>
+                    <textarea 
+                        id="transcribedText"
+                        rows="12"
+                        style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; font-family: 'SF Mono', Monaco, monospace; resize: vertical; outline: none;"
+                        onfocus="this.style.borderColor='#2563eb'"
+                        onblur="this.style.borderColor='#e2e8f0'"
+                    ></textarea>
+                </div>
+                
+                <!-- Processing Status -->
+                <div id="processingStatus" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+                    <p style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">
+                        Converting speech to text...
+                    </p>
+                    <p style="font-size: 0.9rem; color: #3b82f6;">
+                        This may take 1-2 minutes depending on audio length
+                    </p>
+                </div>
+                
+                <!-- Buttons -->
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button type="button" class="btn" id="transcribeBtn" style="display: none;" onclick="transcribeAudio()">
+                        Transcribe Audio
+                    </button>
+                    <button type="button" class="btn btn-success" id="generateFromVoiceBtn" style="display: none;" onclick="generateFromVoice()">
+                        Generate Report
+                    </button>
+                    <a href="/" class="btn btn-secondary">
+                        Cancel
+                    </a>
+                </div>
+                
             </div>
         </div>
     </form>
 </div>
 
 <script>
-    // Show loading state when form is submitted
-    document.getElementById('meetingForm').addEventListener('submit', function(e) {
+let selectedFile = null;
+
+// Tab Switching
+function switchTab(tab) {
+    const textTab = document.getElementById('textTab');
+    const voiceTab = document.getElementById('voiceTab');
+    const textContent = document.getElementById('textContent');
+    const voiceContent = document.getElementById('voiceContent');
+    
+    if (tab === 'text') {
+        textTab.style.color = '#2563eb';
+        textTab.style.borderBottom = '2px solid #2563eb';
+        voiceTab.style.color = '#64748b';
+        voiceTab.style.borderBottom = '2px solid transparent';
+        textContent.style.display = 'block';
+        voiceContent.style.display = 'none';
+    } else {
+        voiceTab.style.color = '#2563eb';
+        voiceTab.style.borderBottom = '2px solid #2563eb';
+        textTab.style.color = '#64748b';
+        textTab.style.borderBottom = '2px solid transparent';
+        voiceContent.style.display = 'block';
+        textContent.style.display = 'none';
+    }
+}
+
+// File Selection
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        selectedFile = file;
+        showFileInfo(file);
+    }
+}
+
+// Drag and Drop
+function handleDrop(event) {
+    event.preventDefault();
+    const uploadArea = document.getElementById('uploadArea');
+    uploadArea.style.borderColor = '#cbd5e1';
+    uploadArea.style.background = '#f8fafc';
+    
+    const file = event.dataTransfer.files[0];
+    if (file) {
+        selectedFile = file;
+        document.getElementById('audioFile').files = event.dataTransfer.files;
+        showFileInfo(file);
+    }
+}
+
+// Show File Info
+function showFileInfo(file) {
+    document.getElementById('fileName').textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+    document.getElementById('fileInfo').style.display = 'block';
+    document.getElementById('transcribeBtn').style.display = 'inline-block';
+    document.getElementById('transcriptionArea').style.display = 'none';
+    document.getElementById('generateFromVoiceBtn').style.display = 'none';
+}
+
+// Format File Size
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// Transcribe Audio
+async function transcribeAudio() {
+    if (!selectedFile) {
+        alert('Please select an audio file first');
+        return;
+    }
+    
+    // Hide button, show processing
+    document.getElementById('transcribeBtn').style.display = 'none';
+    document.getElementById('processingStatus').style.display = 'block';
+    
+    // Create form data
+    const formData = new FormData();
+    formData.append('audio_file', selectedFile);
+    
+    try {
+        const response = await fetch('/transcribe', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        // Hide processing
+        document.getElementById('processingStatus').style.display = 'none';
+        
+        if (data.success) {
+            // Show transcription
+            document.getElementById('transcribedText').value = data.text;
+            document.getElementById('transcriptionArea').style.display = 'block';
+            document.getElementById('generateFromVoiceBtn').style.display = 'inline-block';
+        } else {
+            alert('Error: ' + data.error);
+            document.getElementById('transcribeBtn').style.display = 'inline-block';
+        }
+        
+    } catch (error) {
+        document.getElementById('processingStatus').style.display = 'none';
+        document.getElementById('transcribeBtn').style.display = 'inline-block';
+        alert('Error transcribing audio: ' + error.message);
+    }
+}
+
+// Generate Report from Voice
+function generateFromVoice() {
+    const text = document.getElementById('transcribedText').value;
+    
+    if (!text || text.trim().length < 50) {
+        alert('Transcribed text is too short. Please check the audio quality.');
+        return;
+    }
+    
+    // Copy to main textarea and submit
+    document.getElementById('meeting_notes').value = text;
+    document.getElementById('meetingForm').submit();
+    
+    // Show loading
+    document.getElementById('generateFromVoiceBtn').disabled = true;
+    document.getElementById('generateFromVoiceBtn').innerHTML = '⏳ Processing...';
+}
+
+// Text form submit loading
+document.getElementById('meetingForm').addEventListener('submit', function(e) {
+    // Only handle if submitting from text tab
+    const textContent = document.getElementById('textContent');
+    if (textContent.style.display !== 'none') {
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.style.opacity = '0.6';
         btn.innerHTML = '⏳ Processing... (this may take 20-30 seconds)';
-    });
+    }
+});
 </script>
+
+<style>
+.tab-btn.active {
+    color: #2563eb !important;
+    border-bottom: 2px solid #2563eb !important;
+}
+</style>
 {% endblock %}

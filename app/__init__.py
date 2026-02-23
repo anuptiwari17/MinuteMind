@@ -1,12 +1,17 @@
 from flask import Flask
 from config import Config
 from logger_config import log_info
+from database import init_database
 
 app = Flask(__name__)
 
 # Load configuration from config.py
 app.config.from_object(Config)
 app.secret_key = Config.SECRET_KEY
+
+# Initialize database
+log_info("Initializing database...")
+init_database()
 
 # Log startup
 log_info("=" * 50)

@@ -2,3 +2,6 @@ flask
 requests
 reportlab
 python-dotenv
+vosk
+soundfile
+pydub
